@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: achemlal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/12/06 11:18:58 by achemlal          #+#    #+#             */
-/*   Updated: 2024/12/06 11:21:55 by achemlal         ###   ########.fr       */
+/*   Created: 2024/12/06 11:52:02 by achemlal          #+#    #+#             */
+/*   Updated: 2024/12/06 11:57:18 by achemlal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 static char	*set_line(char **str)
 {
@@ -66,24 +66,26 @@ char	*get_next_line(int fd)
 {
 	char		*line;
 	char		*buffer;
-	static char	*str;
+	static char	*str[1024];
 
+	if (fd > 1024)
+		return (NULL);
 	if (BUFFER_SIZE <= 0 || fd < 0 || read(fd, NULL, 0) < 0)
 	{
-		free(str);
-		str = NULL;
+		free(str[fd]);
+		str[fd] = NULL;
 		return (NULL);
 	}
 	buffer = (char *)malloc(sizeof(char) * (BUFFER_SIZE + 1));
 	if (!buffer)
 		return (NULL);
-	line = ft_readfile(fd, &str, buffer);
+	line = ft_readfile(fd, &str[fd], buffer);
 	free(buffer);
 	buffer = NULL;
 	if (!line)
 	{
-		free(str);
-		str = NULL;
+		free(str[fd]);
+		str[fd] = NULL;
 		return (NULL);
 	}
 	return (line);
