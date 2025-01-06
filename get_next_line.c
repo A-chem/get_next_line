@@ -6,13 +6,13 @@
 /*   By: achemlal <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/06 11:18:58 by achemlal          #+#    #+#             */
-/*   Updated: 2024/12/06 11:21:55 by achemlal         ###   ########.fr       */
+/*   Updated: 2024/12/07 10:28:55 by achemlal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-static char	*set_line(char **str)
+static char	*ft_set_line(char **str)
 {
 	size_t	pos_nline;
 	char	*line;
@@ -54,11 +54,13 @@ static char	*ft_readfile(int fd, char **str, char *buffer)
 		buffer[readbuf] = '\0';
 		temp = *str;
 		*str = ft_strjoin(*str, buffer);
+		if (!*str)
+			return (free(temp), NULL);
 		free(temp);
 		if (ft_strchr(buffer, '\n') != NULL)
 			break ;
 	}
-	line = set_line(str);
+	line = ft_set_line(str);
 	return (line);
 }
 
@@ -68,13 +70,13 @@ char	*get_next_line(int fd)
 	char		*buffer;
 	static char	*str;
 
-	if (BUFFER_SIZE <= 0 || fd < 0 || read(fd, NULL, 0) < 0)
+	if (BUFFER_SIZE <= 0 || BUFFER_SIZE > INT_MAX || read(fd, NULL, 0) < 0)
 	{
 		free(str);
 		str = NULL;
 		return (NULL);
 	}
-	buffer = (char *)malloc(sizeof(char) * (BUFFER_SIZE + 1));
+	buffer = (char *)malloc((size_t)BUFFER_SIZE + 1);
 	if (!buffer)
 		return (NULL);
 	line = ft_readfile(fd, &str, buffer);
